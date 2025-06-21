@@ -1,97 +1,145 @@
-# 🚀 PIPEX
+# 🔧 PIPEX – A Unix Shell Pipe Emulator
 
-`pipex` is a 42 school project that replicates the behavior of the Unix shell using pipes (`|`). Its goal is to execute two commands connected via a pipe, correctly redirecting standard input and output between files and processes.
+Welcome to **PIPEX**, a project developed as part of the curriculum at [42 School](https://42.fr/). This program emulates the behavior of Unix shell pipelines, enabling the redirection of input and output streams between commands and files, mimicking the following shell behavior:
 
----
-
-## 🎯 Project Objectives
-
-- Use of `fork`, `execve`, `pipe`, `dup2`, `waitpid`
-- File descriptor manipulation
-- Standard input/output redirection
-- Command path resolution using `PATH`
-- Error and permission handling
-- Memory and resource management
+```bash
+< infile command1 | command2 > outfile
+```
 
 ---
 
-## ⚙️ Compilation
+## 📚 Learning Objectives
 
-Use the provided `Makefile`:
+This project demonstrates proficiency in low-level system programming using:
+
+- Process creation and synchronization (`fork`, `waitpid`)
+- Inter-process communication with `pipe`
+- File descriptor duplication with `dup2`
+- Executing programs via `execve`
+- Command resolution using the `PATH` environment variable
+- Advanced file and error handling
+- Manual memory management
+
+---
+
+## 🧠 Project Overview
+
+`pipex` takes four arguments:
+
+```bash
+./pipex infile "cmd1" "cmd2" outfile
+```
+
+It performs the following operations:
+1. Opens the `infile` and redirects it to `stdin`.
+2. Executes `cmd1`, writing its output to a pipe.
+3. Executes `cmd2`, reading input from that pipe.
+4. Writes the final output to `outfile`.
+
+---
+
+## 🛠️ Compilation
+
+Compile the project with:
 
 ```bash
 make
 ```
 
-To clean object files:
+Available Makefile targets:
+
+| Command         | Description                  |
+|----------------|------------------------------|
+| `make`         | Compiles the project         |
+| `make clean`   | Removes object files         |
+| `make fclean`  | Removes binaries and objects |
+| `make re`      | Recompiles from scratch      |
+
+---
+
+## 🚀 Usage Examples
 
 ```bash
-make clean
+./pipex input.txt "grep 42" "wc -l" output.txt
 ```
 
-To fully clean the project:
+This command emulates the shell instruction:
 
 ```bash
-make fclean
+< input.txt grep 42 | wc -l > output.txt
+```
+
+More examples:
+
+```bash
+./pipex lorem.txt "cat" "wc -w" words.txt
+./pipex data.csv "tail -n +2" "cut -d, -f2" result.txt
 ```
 
 ---
 
-## 🧪 Usage
-
-Run the binary using the following syntax:
-
-```bash
-./pipex input_file "command1" "command2" output_file
-```
-
-📌 **Example:**
-
-```bash
-./pipex input.txt "grep hello" "wc -l" output.txt
-```
-
-This is equivalent to:
-
-```bash
-< input.txt grep hello | wc -l > output.txt
-```
-
----
-
-## 🗂️ Project Structure
+## 📁 Project Structure
 
 ```
 pipex/
 ├── src/
-│   ├── pipex.c
-│   ├── pipex_utils.c
-│   └── aux_utils.c
+│   ├── pipex.c           # Core logic
+│   ├── pipex_utils.c     # Helper functions
+│   └── aux_utils.c       # Extra utilities
 ├── lib/
-│   └── LIBFT/         # Custom library (libft)
-├── pipex.h            # Main header
+│   └── LIBFT/            # Custom C standard library (libft)
+├── include/
+│   └── pipex.h           # Main header
 ├── Makefile
 ```
 
 ---
 
-## ❌ Error Handling
+## 🔍 Error Handling
 
-- Invalid commands
-- Non-existent or inaccessible files
-- Incorrect usage
-- Execution and access verification for binaries
+The program gracefully handles:
 
----
+- Missing or invalid arguments
+- File permission errors
+- Command not found in `PATH`
+- Failed system calls (`open`, `dup2`, `pipe`, `fork`, etc.)
 
-## 👤 Author
-
-- **Noam Novack**  
-- GitHub: [Nouvack](https://github.com/Nouvack)  
-- 42 login: `nsantand`
+Descriptive error messages are displayed using `perror` or custom messages.
 
 ---
 
-## 🧾 License
+## 🧪 Testing
 
-This project was developed for educational purposes as part of the 42 school curriculum.
+You can test `pipex` by comparing its output with the shell pipeline equivalent:
+
+```bash
+diff <(./pipex infile "cmd1" "cmd2" outfile) <( < infile cmd1 | cmd2 > outfile )
+```
+
+This is a good way to verify correctness of redirection and execution flow.
+
+---
+
+## 🧠 Bonus Ideas
+
+To go beyond the basics, you can implement:
+
+- Support for multiple pipes (i.e., more than two commands)
+- Handling quoted arguments correctly
+- Here-doc (`<<`) support
+- Robust `PATH` resolution
+
+---
+
+## 👨‍💻 Author
+
+**Noam Novack**  
+📎 GitHub: [@Nouvack](https://github.com/Nouvack)  
+🏫 42 Login: `nsantand`
+
+---
+
+## 📜 License
+
+This project was created for academic purposes as part of the 42 School program.  
+Feel free to explore, fork, and learn from it.
