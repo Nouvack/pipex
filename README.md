@@ -1,145 +1,156 @@
-# 🔧 PIPEX – A Unix Shell Pipe Emulator
+# 🔗 PIPEX
 
-Welcome to **PIPEX**, a project developed as part of the curriculum at [42 School](https://42.fr/). This program emulates the behavior of Unix shell pipelines, enabling the redirection of input and output streams between commands and files, mimicking the following shell behavior:
+<img src="banner.svg" alt="PIPEX banner" />
+
+## 📘 Overview
+
+`pipex` is a project from the 42 curriculum that replicates a simple Unix shell behavior by executing commands connected by pipes (`|`). The goal is to simulate the following shell operation:
 
 ```bash
-< infile command1 | command2 > outfile
+< infile cmd1 | cmd2 > outfile
+```
+
+It challenges students to work directly with system calls like `pipe`, `fork`, `dup2`, and `execve`, and to develop a deeper understanding of UNIX I/O, process management, and inter-process communication.
+
+This repository includes:
+- ✅ A mandatory version that handles two commands and a single pipe.
+- ✨ A bonus version (optional) that supports multiple pipes and `here_doc`.
+
+---
+
+## 🚀 Features
+
+- Execute two shell commands connected by a pipe.
+- Proper file redirection for input and output files.
+- Command path resolution using the `PATH` environment variable.
+- Handles error reporting for invalid commands and missing files.
+- Manages child processes and resources cleanly.
+- Minimal memory footprint with no leaks (Valgrind clean).
+
+---
+
+## 🌟 Bonus Features (Optional)
+
+- Support for unlimited number of piped commands:
+  ```bash
+  ./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
+  ```
+- Support for **here_doc** syntax:
+  ```bash
+  ./pipex here_doc LIMITER cmd1 cmd2 outfile
+  ```
+
+---
+
+## 🛠 Requirements
+
+- A C compiler (`gcc`, `clang`, etc.)
+- Must use allowed system calls only:
+  - `open`, `close`, `read`, `write`, `malloc`, `free`, `access`, `dup`, `dup2`, `execve`, `pipe`, `fork`, `wait`, `waitpid`, `perror`, `strerror`
+- **No memory leaks allowed**
+- Bonus must support dynamic pipelines and heredoc syntax
+
+---
+
+## ⚙️ How to Compile
+
+Clone and build the project using the provided `Makefile`:
+
+```bash
+git clone https://github.com/Nouvack/pipex.git
+cd pipex
+make
+```
+
+To clean object files:
+```bash
+make clean
+```
+
+To clean everything:
+```bash
+make fclean
+```
+
+To rebuild:
+```bash
+make re
 ```
 
 ---
 
-## 📚 Learning Objectives
-
-This project demonstrates proficiency in low-level system programming using:
-
-- Process creation and synchronization (`fork`, `waitpid`)
-- Inter-process communication with `pipe`
-- File descriptor duplication with `dup2`
-- Executing programs via `execve`
-- Command resolution using the `PATH` environment variable
-- Advanced file and error handling
-- Manual memory management
-
----
-
-## 🧠 Project Overview
-
-`pipex` takes four arguments:
+## 📄 Usage
 
 ```bash
 ./pipex infile "cmd1" "cmd2" outfile
 ```
 
-It performs the following operations:
-1. Opens the `infile` and redirects it to `stdin`.
-2. Executes `cmd1`, writing its output to a pipe.
-3. Executes `cmd2`, reading input from that pipe.
-4. Writes the final output to `outfile`.
-
----
-
-## 🛠️ Compilation
-
-Compile the project with:
+### 🔁 Equivalent to:
 
 ```bash
-make
+< infile cmd1 | cmd2 > outfile
 ```
 
-Available Makefile targets:
-
-| Command         | Description                  |
-|----------------|------------------------------|
-| `make`         | Compiles the project         |
-| `make clean`   | Removes object files         |
-| `make fclean`  | Removes binaries and objects |
-| `make re`      | Recompiles from scratch      |
-
----
-
-## 🚀 Usage Examples
+### ✅ Example:
 
 ```bash
-./pipex input.txt "grep 42" "wc -l" output.txt
-```
-
-This command emulates the shell instruction:
-
-```bash
-< input.txt grep 42 | wc -l > output.txt
-```
-
-More examples:
-
-```bash
-./pipex lorem.txt "cat" "wc -w" words.txt
-./pipex data.csv "tail -n +2" "cut -d, -f2" result.txt
+./pipex input.txt "grep hello" "wc -l" output.txt
 ```
 
 ---
 
-## 📁 Project Structure
+## 🧪 Testing Scenarios
+
+| Test Case              | Description                                   | Expected Outcome               |
+|------------------------|-----------------------------------------------|--------------------------------|
+| Valid commands         | Normal redirection between cmd1 & cmd2        | Output in outfile              |
+| Non-existent infile    | Should return error and exit gracefully       | Proper error message           |
+| Invalid command        | Handles `command not found` errors            | Error output from shell        |
+| Permissions error      | Denied access to read/write files             | Displays error using `perror`  |
+| Empty file             | cmd1 receives no input                        | cmd2 handles accordingly       |
+| Output redirection     | outfile is created or overwritten             | Result of pipeline stored      |
+| Bonus: here_doc        | Accepts input until LIMITER is reached        | Then proceeds like a pipe      |
+
+---
+
+## 📂 Project Structure
 
 ```
 pipex/
 ├── src/
-│   ├── pipex.c           # Core logic
-│   ├── pipex_utils.c     # Helper functions
-│   └── aux_utils.c       # Extra utilities
+│   ├── pipex.c           # Core pipeline logic
+│   ├── pipex_utils.c     # Command parsing & execution
+│   └── aux_utils.c       # Additional helper functions
 ├── lib/
-│   └── LIBFT/            # Custom C standard library (libft)
+│   └── LIBFT/            # Custom libft functions
 ├── include/
-│   └── pipex.h           # Main header
+│   └── pipex.h           # Header file with prototypes
 ├── Makefile
 ```
 
 ---
 
-## 🔍 Error Handling
+## 🧠 What I Learned
 
-The program gracefully handles:
-
-- Missing or invalid arguments
-- File permission errors
-- Command not found in `PATH`
-- Failed system calls (`open`, `dup2`, `pipe`, `fork`, etc.)
-
-Descriptive error messages are displayed using `perror` or custom messages.
-
----
-
-## 🧪 Testing
-
-You can test `pipex` by comparing its output with the shell pipeline equivalent:
-
-```bash
-diff <(./pipex infile "cmd1" "cmd2" outfile) <( < infile cmd1 | cmd2 > outfile )
-```
-
-This is a good way to verify correctness of redirection and execution flow.
-
----
-
-## 🧠 Bonus Ideas
-
-To go beyond the basics, you can implement:
-
-- Support for multiple pipes (i.e., more than two commands)
-- Handling quoted arguments correctly
-- Here-doc (`<<`) support
-- Robust `PATH` resolution
+- 🔄 How processes communicate via pipes in UNIX
+- 🔧 Using `dup2()` for file descriptor manipulation
+- 🔍 Searching `PATH` for executable commands
+- 🧼 Managing dynamic memory and avoiding leaks
+- 🧵 Using `fork()` and synchronizing with `waitpid()`
 
 ---
 
 ## 👨‍💻 Author
 
-**Noam Novack**  
-📎 GitHub: [@Nouvack](https://github.com/Nouvack)  
-🏫 42 Login: `nsantand`
+**Name:** Noam Novack  
+**GitHub:** [Nouvack](https://github.com/Nouvack)  
+**42 Login:** nsantand
 
 ---
 
-## 📜 License
+## 🙌 Acknowledgments
 
-This project was created for academic purposes as part of the 42 School program.  
-Feel free to explore, fork, and learn from it.
+Special thanks to 42 School for providing rigorous, real-world inspired projects that deepen understanding of system-level programming.
+
+This project was proudly developed as part of the 42 Common Core.  
+Crafted with `pipe()`, `fork()` and lots of `💻`.
