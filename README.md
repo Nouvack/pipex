@@ -1,6 +1,6 @@
 # Pipex
 
-<img src="banner_pipex.svg" alt="PIPEX banner" />
+<img src="banner.svg" alt="PIPEX banner" />
 
 ## 📘 Overview
 
