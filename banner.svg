@@ -1,0 +1,59 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes glitch-before {
+      0% { clip-path: inset(20% 0 50% 0); }
+      10% { clip-path: inset(15% 0 55% 0); }
+      20% { clip-path: inset(25% 0 35% 0); }
+      30% { clip-path: inset(10% 0 60% 0); }
+      40% { clip-path: inset(30% 0 40% 0); }
+      50% { clip-path: inset(20% 0 50% 0); }
+      60% { clip-path: inset(10% 0 60% 0); }
+      70% { clip-path: inset(25% 0 35% 0); }
+      80% { clip-path: inset(40% 0 20% 0); }
+      90% { clip-path: inset(15% 0 55% 0); }
+      100% { clip-path: inset(30% 0 40% 0); }
+    }
+
+    @keyframes glitch-after {
+      0% { clip-path: inset(10% 0 60% 0); }
+      10% { clip-path: inset(25% 0 35% 0); }
+      20% { clip-path: inset(40% 0 20% 0); }
+      30% { clip-path: inset(20% 0 50% 0); }
+      40% { clip-path: inset(15% 0 55% 0); }
+      50% { clip-path: inset(30% 0 40% 0); }
+      60% { clip-path: inset(10% 0 60% 0); }
+      70% { clip-path: inset(25% 0 35% 0); }
+      80% { clip-path: inset(15% 0 55% 0); }
+      90% { clip-path: inset(30% 0 40% 0); }
+      100% { clip-path: inset(20% 0 50% 0); }
+    }
+
+    .text {
+      font-family: 'Arial Black', sans-serif;
+      font-size: 100px;
+      font-weight: bold;
+      fill: white;
+    }
+
+    .before {
+      fill: cyan;
+      transform: translate(-4px, 0);
+      animation: glitch-before 2s infinite linear alternate-reverse;
+    }
+
+    .after {
+      fill: red;
+      transform: translate(4px, 0);
+      animation: glitch-after 3s infinite linear alternate-reverse;
+    }
+
+    .background {
+      fill: #060010;
+    }
+  </style>
+
+  <rect width="100%" height="100%" class="background" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="text before">PIPEX</text>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="text after">PIPEX</text>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="text">PIPEX</text>
+</svg>
